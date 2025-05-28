@@ -9,57 +9,57 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '22'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Run tests and save results
-      run: |
-        mkdir -p test-results
-        npm test > test-results/results.txt
+      - name: Run tests and save results
+        run: |
+          mkdir -p test-results
+          npm test > test-results/results.txt
 
-    - name: Upload test results
-      uses: actions/upload-artifact@v3
-      with:
-        name: test-results
-        path: test-results/results.txt
-        
-deploy:
-  needs: test
-  runs-on: [self-hosted, linux]
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: test-results/results.txt
 
-  steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+  deploy:
+    needs: test
+    runs-on: [self-hosted, linux]
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '22'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Install Dependencies
-      run: npm install
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
 
-    - name: Download Test Results
-      uses: actions/download-artifact@v3
-      with:
-        name: test-results
+      - name: Install Dependencies
+        run: npm install
 
-    - name: Show Test Output
-      run: cat test-results.txt
+      - name: Download Test Results
+        uses: actions/download-artifact@v3
+        with:
+          name: test-results
 
-    - name: Cleanup Existing PM2 Process
-      run: pm2 delete node-app || true
+      - name: Show Test Output
+        run: cat test-results.txt
 
-    - name: Start Application
-      run: pm2 start "./src/server.js" --name node-app
+      - name: Cleanup Existing PM2 Process
+        run: pm2 delete node-app || true
 
-    - name: Save PM2 Process List
-      run: pm2 save
+      - name: Start Application
+        run: pm2 start "./src/server.js" --name node-app
+
+      - name: Save PM2 Process List
+        run: pm2 save
