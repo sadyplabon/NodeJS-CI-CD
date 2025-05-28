@@ -1,0 +1,32 @@
+deploy:
+  needs: test
+  runs-on: [self-hosted, linux]
+
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '22'
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Download Test Results
+      uses: actions/download-artifact@v3
+      with:
+        name: test-results
+
+    - name: Show Test Output
+      run: cat test-results.txt
+
+    - name: Cleanup Existing PM2 Process
+      run: pm2 delete node-app || true
+
+    - name: Start Application
+      run: pm2 start "./src/server.js" --name node-app
+
+    - name: Save PM2 Process List
+      run: pm2 save
