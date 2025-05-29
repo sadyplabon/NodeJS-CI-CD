@@ -53,7 +53,7 @@ jobs:
           name: test-results
 
       - name: Show Test Output
-        run: cat test-results.txt
+        run: cat results.txt
 
       - name: Cleanup Existing PM2 Process
         run: pm2 delete node-app || true
