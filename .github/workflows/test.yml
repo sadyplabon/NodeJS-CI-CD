@@ -1,0 +1,17 @@
+name: Artifact Upload Test
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: [self-hosted, linux]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: echo "Hello Test" > hello.txt
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: hello-artifact
+          path: hello.txt
